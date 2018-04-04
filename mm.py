@@ -12,32 +12,23 @@ feature_dict = {i:label for i,label in zip(
                   'petal width in cm', ))}
 
 
-cf = pd.io.parsers.read_csv(
-    filepath_or_buffer='https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data',
-    header=None,
-    sep=',',
-    )
-df = pd.io.parsers.read_csv(
-    filepath_or_buffer='https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data',
-    header=None,
-    sep=',',
-    )
+cf = pd.read_excel("Book3.xlsx","Sheet1")
+df = pd.read_excel("Book3.xlsx","Sheet1")
 df.columns = [l for i,l in sorted(feature_dict.items())] + ['class label']
 df.columns = [l for i,l in sorted(feature_dict.items())] + ['class label']
 df.dropna(how="all", inplace=True) # to drop the empty line at file-end
 cf.dropna(how="all", inplace=True) # to drop the empty line at file-end
 cf.tail()
 df.tail()
-print(cf)
+
 X=cf[[0,1,2,3]].values
 y = df['class label'].values
-
 
 enc = LabelEncoder()
 label_encoder = enc.fit(y)
 y = label_encoder.transform(y) + 1
 
-label_dict = {1: 'Setosa', 2: 'Versicolor', 3:'Virginica'}
+label_dict = {1: 'Excellent', 2: 'Good', 3:'Average',4:'Poor'}
 
 # #PLOTTING
 
@@ -51,7 +42,7 @@ for ax,cnt in zip(axes.ravel(), range(4)):
     bins = np.linspace(min_b, max_b, 25)
 
     # plottling the histograms
-    for lab,col in zip(range(1,4), ('blue', 'red', 'green')):
+    for lab,col in zip(range(1,4), ('blue', 'red', 'green','orange')):
         ax.hist(X[y==lab, cnt],
                    color=col,
                    label='class %s' %label_dict[lab],
@@ -143,7 +134,10 @@ for i in eig_pairs:
     print(i[0])
 
 print('Variance explained:\n')
-eigv_sum = sum(eig_vals)
+eigv_sum=0
+for i in eig_vals:
+    eigv_sum+=i
+
 for i,j in enumerate(eig_pairs):
     print('eigenvalue {0:}: {1:.2%}'.format(i+1, (j[0]/eigv_sum).real))
 
@@ -152,13 +146,13 @@ W = np.hstack((eig_pairs[0][1].reshape(4,1), eig_pairs[1][1].reshape(4,1)))
 print('Matrix W:\n', W.real)
 
 X_lda = X.dot(W)
-assert X_lda.shape == (150,2), "The matrix is not 150x2 dimensional."
+#assert X_lda.shape == (395,2), "The matrix is not 150x2 dimensional."
 
 def plot_step_lda():
 
     ax = plt.subplot(111)
     for label,marker,color in zip(
-        range(1,4),('^', 's', 'o'),('blue', 'red', 'green')):
+        range(1,4),('^', 's', 'o','p'),('blue', 'red', 'green','orange')):
 
         plt.scatter(x=X_lda[:,0].real[y == label],
                 y=X_lda[:,1].real[y == label],
